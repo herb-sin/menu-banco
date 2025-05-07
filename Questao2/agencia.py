@@ -29,15 +29,20 @@ class Agencia:
                 if resposta == "s":
                     tipo = sugestao
                 else:
-                    # Lança exceção!
-                    raise ValueError(f"Tipo de conta '{tipo}' inválido!")
-
-            else:
-                # Lança exceção se não houver sugestão
+                    pass  # Não faz nada se o usuário disser não
+            if tipo not in tipos_validos:  # Verifica novamente após a sugestão
                 raise ValueError(f"Tipo de conta '{tipo}' inválido!")
 
-        # Passa o saldo inicial corretamente
-        nova_conta = tipos_validos[tipo](numero, saldo_inicial)
+            # Passa o saldo inicial corretamente
+        if tipo == "automatica":
+            nova_conta = tipos_validos[tipo](
+                saldo_inicial)  # Não passa o número
+        elif tipo == "corrente":
+            taxa_padrao = 0.05  # Defina uma taxa padrão
+            nova_conta = tipos_validos[tipo](
+                numero, taxa_padrao, saldo_inicial)
+        else:
+            nova_conta = tipos_validos[tipo](numero, saldo_inicial)
         self._contas[numero] = nova_conta
 
     def remover_conta(self, numero):
@@ -48,7 +53,6 @@ class Agencia:
     def buscar_conta(self, numero_conta):
         conta = self._contas.get(numero_conta)
         if conta:
-            return conta
 
     def creditar(self, numero, valor):
         conta = self.buscar_conta(numero)
