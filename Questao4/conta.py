@@ -57,9 +57,8 @@ class Automatica(Conta):
     _contador = 1
 
     def __init__(self, saldo=0.0):
-        super().__init__(Automatica._contador, saldo)
-        self.numero = Automatica._contador  # Usar o setter
+        super().__init__(Automatica._contador, saldo)  # Inicializa 'numero' com o contador
         Automatica._contador += 1
-
+    
     def __str__(self):
         return f"Conta Automática: {self.numero}, Saldo: R${self.saldo:.2f}"
