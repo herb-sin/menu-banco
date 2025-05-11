@@ -33,7 +33,7 @@ class Agencia:
             if tipo not in tipos_validos:  # Verifica novamente após a sugestão
                 raise ValueError(f"Tipo de conta '{tipo}' inválido!")
 
-            # Passa o saldo inicial corretamente
+        # Passa o saldo inicial corretamente
         if tipo == "automatica":
             nova_conta = tipos_validos[tipo](
                 saldo_inicial)  # Não passa o número
@@ -51,25 +51,26 @@ class Agencia:
         del self._contas[numero]  # Remove a conta corretamente do dicionário
 
     def buscar_conta(self, numero_conta):
-        conta = self._contas.get(numero_conta)
-        if conta:
-            return conta
-        return None  # Retorno explícito se a conta não for encontrada
+        return self._contas.get(numero_conta)
 
     def creditar(self, numero, valor):
         conta = self.buscar_conta(numero)
         if conta:
-            print(f"[Agencia.py] Saldo antes do crédito: {conta.saldo}")
             conta.saldo = valor  # Setter fará o crédito
-            print(f"[Agencia.py] Saldo após o crédito: {conta.saldo}")
 
     def debitar(self, numero, valor):
         conta = self.buscar_conta(numero)
         if conta:
-            print(f"Saldo antes do débito: {conta.saldo}")
             conta.saldo = -valor  # Setter fará o débito
-            print(f"Saldo após o débito: {conta.saldo}")
 
-    def relatorio(self):
-        saldo_total = sum(conta.saldo for conta in self._contas.values())
-        return f"Agência {self._numero}: Contas = {len(self._contas)}, Saldo Total = R${saldo_total:.2f}"
+    def __add__(self, other):
+        if isinstance(other, Agencia):
+            saldo_total_self = sum(
+                conta.saldo for conta in self._contas.values())
+            saldo_total_other = sum(
+                conta.saldo for conta in other._contas.values())
+            return saldo_total_self + saldo_total_other
+        raise TypeError("Operação inválida: Soma apenas entre agências.")
+
+    def __str__(self):
+        return f"Agencia {self.numero}, Saldo Total: R$ {sum(conta.saldo for conta in self._contas.values()):.2f}, Contas: {len(self._contas)}"
