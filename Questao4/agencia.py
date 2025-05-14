@@ -5,6 +5,7 @@ class Agencia:
     def __init__(self, numero):
         self._numero = numero
         self._contas = {}
+        self._saldo_total = 0.0
 
     @property
     def numero(self):
@@ -44,24 +45,29 @@ class Agencia:
         else:
             nova_conta = tipos_validos[tipo](numero, saldo_inicial)
         self._contas[numero] = nova_conta
-
+        self._saldo_total += saldo_inicial
+    
     def remover_conta(self, numero):
-        if numero not in self._contas:
-            raise ValueError(f"Conta {numero} não encontrada!")
-        del self._contas[numero]  # Remove a conta corretamente do dicionário
+        if numero in self._contas:
+            conta_removida = self._contas.pop(numero)
+            self._saldo_total -= conta_removida.saldo
+            return True
+        return False
 
     def buscar_conta(self, numero_conta):
         return self._contas.get(numero_conta)
-
+            
     def creditar(self, numero, valor):
         conta = self.buscar_conta(numero)
         if conta:
-            conta.saldo = valor  # Setter fará o crédito
+            conta.saldo = valor
+            self._saldo_total += valor
 
     def debitar(self, numero, valor):
         conta = self.buscar_conta(numero)
         if conta:
             conta.saldo = -valor  # Setter fará o débito
+            self._saldo_total -= valor
 
     def __add__(self, other):
         if isinstance(other, Agencia):
@@ -73,4 +79,11 @@ class Agencia:
         raise TypeError("Operação inválida: Soma apenas entre agências.")
 
     def __str__(self):
-        return f"Agencia {self.numero}, Saldo Total: R$ {sum(conta.saldo for conta in self._contas.values()):.2f}, Contas: {len(self._contas)}"
+        return f"Agencia {self.numero}, Saldo Total: R$ {self._saldo_total:.2f}, Contas: {len(self._contas)}"
+    
+    def aplicar_juros_poupanca(self, taxa):
+        for conta in self._contas.values():
+            if isinstance(conta, Poupanca):
+                juros = conta.saldo * taxa
+                conta.saldo = juros
+                self._saldo_total += juros

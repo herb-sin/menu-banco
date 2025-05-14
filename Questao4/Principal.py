@@ -3,26 +3,23 @@ from agencia import Agencia
 from conta import Corrente, Poupanca, Automatica
 
 # Criar um banco
-banco = Banco(1)  # Adicionei um número ao banco
+banco = Banco(1)
 
 # Criar duas agências
 agencia1 = Agencia(101)
 agencia2 = Agencia(202)
 
-# Adicionar as agências ao banco
-banco.cadastrar_agencia(agencia1.numero)  # Usando o número da agência
-banco.cadastrar_agencia(agencia2.numero)
+# Adicionar agências ao banco
+banco.cadastrar_agencia(agencia1)
+banco.cadastrar_agencia(agencia2)
 
-# Criar contas para cada agência
+# Função para criar contas conforme o enunciado
 def criar_contas(agencia):
-    agencia.criar_conta("corrente", 1, 0.0)  # 1 Conta Corrente (taxa de 5%)
-    agencia.criar_conta("poupanca", 2, 0.0)  # 2 Poupança
-    agencia.criar_conta("poupanca", 3, 0.0)
-    agencia.criar_conta("automatica", 4, 0.0)  # 3 Automática
-    agencia.criar_conta("automatica", 5, 0.0)
-    agencia.criar_conta("automatica", 6, 0.0)
+    agencia.criar_conta("corrente", 1, 0.0)  # Conta Corrente (taxa 1%)
+    agencia.criar_conta("poupanca", 2, 0.0)  # Poupança
+    agencia.criar_conta("automatica", 3, 0.0)  # Automática
 
-# Criar contas nas duas agências
+# Criar contas nas agências
 criar_contas(agencia1)
 criar_contas(agencia2)
 
@@ -36,44 +33,41 @@ for agencia in [agencia1, agencia2]:
     for numero in agencia._contas.keys():
         agencia.debitar(numero, 100.0)
 
-# Render juros de 5% em todas as contas de uma agência (exemplo: agência 1)
-print("\nRelatório antes de aplicar juros na agência 101:")
-print(agencia1)
-print(agencia2)
-for numero, conta in agencia1._contas.items():
-    if isinstance(conta, Poupanca):  # Apenas contas que permitem juros
-        conta.render_juros(0.05)
-
-# Imprimir relatório após render juros
-print("\nRelatório após aplicar juros na agência 101:")
-print(agencia1)
-print(banco)
-
-# Remover uma conta de cada agência
-if agencia1._contas:
-    conta_para_remover_agencia1 = next(iter(agencia1._contas))
-    agencia1.remover_conta(conta_para_remover_agencia1)
-    print(f"\nConta {conta_para_remover_agencia1} removida da Agência {agencia1.numero}")
-
-if agencia2._contas:
-    conta_para_remover_agencia2 = next(iter(agencia2._contas))
-    agencia2.remover_conta(conta_para_remover_agencia2)
-    print(f"Conta {conta_para_remover_agencia2} removida da Agência {agencia2.numero}")
-
-
-# Imprimir relatório após remover uma conta
-print("\nRelatório após remover uma conta de cada agência:")
+# Relatório inicial
+print("\nRelatório inicial:")
 print(agencia1)
 print(agencia2)
 print(banco)
 
-# Remover uma agência (exemplo: agência 2)
-if banco._lista_agencias:
-    agencia_para_remover = banco._lista_agencias[0].numero
-    banco.remover_agencia(agencia_para_remover)
+# Render juros de 5% apenas nas contas Poupança da agência 101
+print("\nAplicando juros de 5% nas contas Poupança da Agência 101...")
+agencia1.aplicar_juros_poupanca(0.05)  # Método novo da classe Agencia
 
-    # Imprimir relatório final
-    print("\nRelatório final após remover a agência:")
-    print(banco)
-else:
-    print("\nNão há agências para remover.")
+# Relatório após juros
+print("\nRelatório após juros na Agência 101:")
+print(agencia1)
+print(agencia2)
+print(banco)
+
+# Remover 1 conta de cada agência (a primeira conta da lista)
+print("\nRemovendo uma conta de cada agência...")
+contas_agencia1 = list(agencia1._contas.keys())
+contas_agencia2 = list(agencia2._contas.keys())
+if contas_agencia1:
+    agencia1.remover_conta(contas_agencia1[0])
+if contas_agencia2:
+    agencia2.remover_conta(contas_agencia2[0])
+
+# Relatório após remoção de contas
+print("\nRelatório após remoção de contas:")
+print(agencia1)
+print(agencia2)
+print(banco)
+
+# Remover 1 agência (a primeira da lista)
+print("\nRemovendo a Agência 101...")
+banco.remover_agencia(101)
+
+# Relatório final
+print("\nRelatório final:")
+print(banco)
